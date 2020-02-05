@@ -218,8 +218,8 @@ shinyServer(function(input, output) {
                         mapbox = list(
                             style = 'open-street-map',
                             zoom =9.5,
-                            center = list(lon = lon.center, 
-                                          lat = lat.center))
+                            center = list(lon = mean(df.mel$Longtitude), 
+                                          lat = mean(df.mel$Lattitude)))
                     )
                 } else 
                 {
