@@ -48,9 +48,14 @@ shinyUI(fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             plotlyOutput("housesPlot"),
-            
             textOutput("summary"),
-            plotlyOutput("statsummary")
+            # fluidRow(
+            #     splitLayout(cellWidths = c("50%", "50%"), plotOutput("plotgraph1"), plotOutput("plotgraph2"))
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"), 
+                            plotlyOutput("globalstat"), 
+                            plotlyOutput("statsummary"))
+            )
         )
     )
 ))
