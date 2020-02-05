@@ -9,7 +9,6 @@
 
 library(shiny)
 
-# Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
     source("loadingdata.R")
@@ -28,7 +27,16 @@ shinyServer(function(input, output) {
         else(input$type == "Town house")
         return("t")
     })
-        
+
+    # Compute data.frame dimension 
+    # based on the Selected Region        
+    
+    m.dimAll <- reactive({
+        dim(df.mel[which(df.mel$Rooms == input$rooms &
+                         df.mel$Bathroom == input$barhrooms &
+                         df.mel$Type == convertType()),])[1]
+    })
+    
     m.dim <- reactive({
         if(input$region == "Select a Region"){
             -1
@@ -54,14 +62,101 @@ shinyServer(function(input, output) {
         }
         })
     
-    output$summary <- renderText({
-        if(m.dim() == -1)
-            "Please select a Region"
-        else if(m.dim() == 0)
-            paste("No Residencies match the selected criterias: ", convertType())
-        else
-            paste(m.dim(), " Matching Found ", convertType())
+    # Compute data.frame based on 
+    # Imputted Parameters
+    
+    computeDF <- reactive({
+        ttype <- convertType()
+            rrooms <- as.integer(input$rooms)
+            bbathrooms <- as.integer(input$barhrooms)
+            if(input$region == "All")
+            {
+                df.mel <- df.mel[which(df.mel$Rooms == input$rooms &
+                                           df.mel$Bathroom == input$barhrooms &
+                                           df.mel$Type == ttype),]
+                
+            }else
+            {
+                df.mel <- df.mel[which(df.mel$Regionname == input$region &
+                                           df.mel$Rooms == input$rooms &
+                                           df.mel$Bathroom == input$barhrooms &
+                                           df.mel$Type == ttype),]
+            }
+            df.mel
+
     })
+    
+    compute.meanAll <- reactive({
+            round(mean(df.mel[which(df.mel$Rooms == input$rooms &
+                             df.mel$Bathroom == input$barhrooms &
+                             df.mel$Type == convertType()),]$Price))
+    })
+
+    compute.sdAll <- reactive({
+        round(sd(df.mel[which(df.mel$Rooms == input$rooms &
+                                    df.mel$Bathroom == input$barhrooms &
+                                    df.mel$Type == convertType()),]$Price))
+    })
+    
+    compute.meanRegion <- reactive({
+        round(mean(df.mel[which(df.mel$Rooms == input$rooms &
+                                    df.mel$Bathroom == input$barhrooms &
+                                    df.mel$Type == convertType() &
+                                    df.mel$Regionname == input$region),]$Price))
+    })
+    
+    compute.sdRegion <- reactive({
+        round(sd(df.mel[which(df.mel$Rooms == input$rooms &
+                                    df.mel$Bathroom == input$barhrooms &
+                                    df.mel$Type == convertType() &
+                                    df.mel$Regionname == input$region),]$Price))
+    })
+    
+    # Outputting brief summary of the data
+    output$summary <- renderUI({
+            if(m.dim() == -1)
+                HTML("Please select a Region")
+            else if(m.dim() == 0)
+                HTML("No Residencies match the selected criterias: ")
+            else
+            {
+                str1 <- paste(m.dim(), " Matching Found in Selected Region with")
+                str2 <- paste("Mean Price: ", round(mean(computeDF()$Price),0))
+                str3 <- paste("Standard Deviation: ", round(sd(computeDF()$Price),0))
+                HTML(paste(str1, str2, str3, sep = '<br/>'))
+            }
+        
+    })
+    
+    # Outputting brief summary of the data
+    output$summaryType <- renderUI({
+        if(m.dim() == 0)
+            HTML("No Residencies match the selected criterias: ")
+        else
+        {
+            str1 <- paste(m.dimAll(), " Matching Found For this type with")
+            str2 <- paste("Mean Price: ", compute.meanAll())
+            str3 <- paste("Standard Deviation: ", compute.sdAll())
+            HTML(paste(str1, str2, str3, sep = '<br/>'))
+        }
+    })
+    
+
+        output$summary <- renderUI({
+        if(m.dim() == -1)
+            HTML("Please select a Region")
+        else if(m.dim() == 0)
+            HTML("No Residencies match the selected criterias: ")
+        else
+        {
+            str1 <- paste(m.dim(), " Matching Found in Selected Region with")
+            str2 <- paste("Mean Price: ", round(mean(computeDF()$Price),0))
+            str3 <- paste("Standard Deviation: ", round(sd(computeDF()$Price),0))
+            HTML(paste(str1, str2, str3, sep = '<br/>'))
+        }
+        
+    })
+    
     output$housesPlot <- renderPlotly({
         if(input$region == "Select a Region")
         {
@@ -76,10 +171,6 @@ shinyServer(function(input, output) {
         }
         else
             {
-                
-                # df.mel <- df.mel[df.mel$Regionname == input$region &
-                #                      df.mel$Rooms == input$rooms &
-                #                      df.mel$Bathroom == input$barhrooms,]
                 ttype <- convertType()
                 if(input$region == "All")
                 {
@@ -159,9 +250,6 @@ shinyServer(function(input, output) {
                                     df.mel$Bathroom == input$barhrooms &
                                     df.mel$Type == ttype),]   
 
-        # if(input$region == "Select a Region")
-        # {
-        # } else 
         if (input$region == "All")
         {
             df.mel2 <- df.mel[which(df.mel$Rooms == input$rooms &
@@ -181,38 +269,4 @@ shinyServer(function(input, output) {
         
         p    
         })
-    
-    # output$statsummary <- renderPlotly({
-    #     if(input$region == "Select a Region")
-    #     {
-    #         p <- plot_ly(y = ~rnorm(0), type = "box")
-    #     }else{
-    #         ttype <- convertType()
-    #         if(input$region == "All")
-    #         {
-    #             df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
-    #                                         df.mel$Bathroom == input$barhrooms &
-    #                                         df.mel$Type == ttype),]    
-    #         }else
-    #             {
-    #         df.mel1 <- df.mel[which(df.mel$Regionname == input$region &
-    #                                    df.mel$Rooms == input$rooms &
-    #                                    df.mel$Bathroom == input$barhrooms &
-    #                                    df.mel$Type == ttype),]
-    #         }
-    #          p <- plot_ly(y = df.mel1$Price, type = "box")
-    #     }
-    # })
-    #    output$text1 <- renderText(input$region)
-    # output$distPlot <- renderPlot({
-    # 
-    #     # generate bins based on input$bins from ui.R
-    #     x    <- faithful[, 2]
-    #     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    # 
-    #     # draw the histogram with the specified number of bins
-    #     hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    # 
-    # })
-
 })
