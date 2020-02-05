@@ -10,16 +10,12 @@
 library(shiny)
 library(plotly)
 
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
 
     # Application title
     titlePanel("Melbourne House Prices"),
-    
-    #    hr(),
-    
     fluidRow(
-        column(4,
+        column(3,
                h4("Number of Rooms"),
                br(),
                selectInput("rooms", "Number of Bedrooms",
@@ -28,7 +24,7 @@ shinyUI(fluidPage(
                selectInput("barhrooms", "Number of Bathrooms: ",
                            choices = c("0","1","2","3","4 or more"),
                            selected = "1")),
-        column(4,
+        column(3,
                h4("Parameters"),
                br(),
                selectInput("type", "Type of Residency: ",
@@ -49,10 +45,12 @@ shinyUI(fluidPage(
                            selected = "Select a Region"
                )
         ),
-        column(4,
-               h4("Summary Data"),
-               textOutput("summary"))
-        
+        column(3,
+               h4("Summary Data per Region"),
+               htmlOutput("summary")),
+        column(3,
+               h4("Summary Data per Type (All Region)"),
+               htmlOutput("summaryType"))
         
     ),
     br(),
@@ -61,13 +59,6 @@ shinyUI(fluidPage(
                plotlyOutput("housesPlot")),
         column(4,
                plotlyOutput("statsummary"))
-        # splitLayout(cellWidths = c("70%", "30%"), 
-        #             plotlyOutput("housesPlot"), 
-        #             plotlyOutput("statsummary"))
     ),
-    # plotlyOutput("housesPlot"),
     br(),
-    
-    #,
-    #)
 ))
