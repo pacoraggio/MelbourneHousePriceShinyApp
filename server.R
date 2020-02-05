@@ -145,6 +145,14 @@ shinyServer(function(input, output) {
             }
     })
     
+    output$globalstat <- renderPlotly({
+        ttype <- convertType()
+        df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
+                                    df.mel$Bathroom == input$barhrooms &
+                                    df.mel$Type == ttype),]   
+        p <- plot_ly(y = df.mel1$Price, type = "box")
+        })
+    
     output$statsummary <- renderPlotly({
         if(input$region == "Select a Region")
         {
