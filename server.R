@@ -154,26 +154,55 @@ shinyServer(function(input, output) {
         })
     
     output$statsummary <- renderPlotly({
-        if(input$region == "Select a Region")
+        ttype <- convertType()
+        df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
+                                    df.mel$Bathroom == input$barhrooms &
+                                    df.mel$Type == ttype),]   
+
+        # if(input$region == "Select a Region")
+        # {
+        # } else 
+        if (input$region == "All")
         {
-            p <- plot_ly(y = ~rnorm(0), type = "box")
-        }else{
-            ttype <- convertType()
-            if(input$region == "All")
-            {
-                df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
-                                            df.mel$Bathroom == input$barhrooms &
-                                            df.mel$Type == ttype),]    
-            }else
-                {
-            df.mel1 <- df.mel[which(df.mel$Regionname == input$region &
-                                       df.mel$Rooms == input$rooms &
-                                       df.mel$Bathroom == input$barhrooms &
-                                       df.mel$Type == ttype),]
-            }
-             p <- plot_ly(y = df.mel1$Price, type = "box")
+            df.mel2 <- df.mel[which(df.mel$Rooms == input$rooms &
+                                        df.mel$Bathroom == input$barhrooms &
+                                        df.mel$Type == ttype),]   
+        }else
+        {
+            df.mel2 <- df.mel[which(df.mel$Rooms == input$rooms &
+                                        df.mel$Bathroom == input$barhrooms &
+                                        df.mel$Type == ttype &
+                                        df.mel$Regionname == input$region),]   
         }
-    })
+        
+        p <- plot_ly(y = ~df.mel1$Price, 
+                     type = "box") %>%
+            add_trace(y = ~df.mel2$Price)
+        
+        p    
+        })
+    
+    # output$statsummary <- renderPlotly({
+    #     if(input$region == "Select a Region")
+    #     {
+    #         p <- plot_ly(y = ~rnorm(0), type = "box")
+    #     }else{
+    #         ttype <- convertType()
+    #         if(input$region == "All")
+    #         {
+    #             df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
+    #                                         df.mel$Bathroom == input$barhrooms &
+    #                                         df.mel$Type == ttype),]    
+    #         }else
+    #             {
+    #         df.mel1 <- df.mel[which(df.mel$Regionname == input$region &
+    #                                    df.mel$Rooms == input$rooms &
+    #                                    df.mel$Bathroom == input$barhrooms &
+    #                                    df.mel$Type == ttype),]
+    #         }
+    #          p <- plot_ly(y = df.mel1$Price, type = "box")
+    #     }
+    # })
     #    output$text1 <- renderText(input$region)
     # output$distPlot <- renderPlot({
     # 
