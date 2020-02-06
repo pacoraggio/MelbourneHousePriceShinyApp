@@ -32,9 +32,27 @@ shinyServer(function(input, output) {
     # based on the Selected Region        
     
     m.dimAll <- reactive({
-        dim(df.mel[which(df.mel$Rooms == input$rooms &
+        
+        # file <- "./Data/output.txt"
+        
+        n.res <- dim(df.mel[which(df.mel$Rooms == input$rooms &
                          df.mel$Bathroom == input$barhrooms &
                          df.mel$Type == convertType()),])[1]
+
+        # if(!file.exists("./Data/output.txt"))
+        # {
+        #     file.create("./Data/output.txt")
+        #     write("file created", file = file, append = TRUE)
+        # }else
+        # {
+        #     write(paste("# Rooms", input$rooms, 
+        #                 "# Bathroom: ", input$barhrooms, 
+        #                 "Type:", convertType(),
+        #                 "nrows: ", dim(df.mel[which(df.mel$Rooms == input$rooms &
+        #                                                 df.mel$Bathroom == input$barhrooms &
+        #                                                 df.mel$Type == convertType()),])[1]), file = file, append = TRUE)
+        # }
+        return(n.res)
     })
     
     m.dim <- reactive({
@@ -130,7 +148,7 @@ shinyServer(function(input, output) {
     
     # Outputting brief summary of the data
     output$summaryType <- renderUI({
-        if(m.dim() == 0)
+        if(m.dimAll() == 0)
             HTML("No Residencies match the selected criterias: ")
         else
         {
