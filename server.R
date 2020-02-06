@@ -130,6 +130,7 @@ shinyServer(function(input, output) {
                                     df.mel$Regionname == input$region),]$Price))
     })
     
+    output$outWelcome <- renderText("Welcome to the App")
     # Outputting brief summary of the data
     output$summary <- renderUI({
             if(m.dim() == -1)
