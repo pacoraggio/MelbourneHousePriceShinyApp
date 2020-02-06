@@ -17,7 +17,8 @@ shinyUI(fluidPage(
     fluidRow(
         column(3,
                h4("Number of Rooms"),
-               br(),
+               h5(" bedrooms and bathrooms"),
+               hr(),
                selectInput("rooms", "Number of Bedrooms",
                            choices = c("1","2","3","4","5","6","7", "8", "10", "12"),
                            selected = "3"),
@@ -26,7 +27,8 @@ shinyUI(fluidPage(
                            selected = "1")),
         column(3,
                h4("Parameters"),
-               br(),
+               h5(" Type and city Region "),
+               hr(),
                selectInput("type", "Type of Residency: ",
                            choices = c("House Cottage Villa", "Unit Duplex","Town house"),
                            selected = "House/Cottage/Villa"),
@@ -46,10 +48,14 @@ shinyUI(fluidPage(
                )
         ),
         column(3,
-               h4("Summary Data per Region"),
+               h4("Summary Data"), 
+               h5("per Region"),
+               hr(),
                htmlOutput("summary")),
         column(3,
-               h4("Summary Data per Type (All Region)"),
+               HTML(paste(
+                   h4("Summary Data"), h5("All Region"))),
+               hr(),
                htmlOutput("summaryType"))
         
     ),
