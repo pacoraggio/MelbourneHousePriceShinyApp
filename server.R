@@ -281,9 +281,16 @@ shinyServer(function(input, output) {
                                         df.mel$Regionname == input$region),]   
         }
         
-        p <- plot_ly(y = ~df.mel1$Price, 
-                     type = "box") %>%
-            add_trace(y = ~df.mel2$Price)
+        y <- list(
+            title = "Residency Price"
+        )
+        
+        p <- plot_ly(y = ~df.mel2$Price, 
+                     type = "box",
+                     name = input$region) %>%
+            add_trace(y = ~df.mel1$Price,
+                      name = "All region") %>%
+            layout(yaxis = y)
         
         p    
         })
