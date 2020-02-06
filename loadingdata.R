@@ -1,7 +1,14 @@
 library(dplyr)
+rm(list = ls())
+# df.mel <- read.csv("./Data/melb_data.csv")
+df.mel <- read.csv("./Data/Melbourne_housing_FULL.csv")
+df.mel <- df.mel[which(!is.na(df.mel$Lattitude) &
+                           !is.na(df.mel$Price) &
+                           !is.na(df.mel$Bathroom)),]
 
-df.mel <- read.csv("./Data/melb_data.csv")
-df.mel <- df.mel[!(is.na(df.mel$Longtitude)),]
+# df1_FULL <- df1_FULL[which(!is.na(df1_FULL$Lattitude) & 
+#                                !is.na(df1_FULL$Price) &
+#                                !is.na(df1_FULL$Bathroom)),]
 
 df.mel$PriceCategory <-cut(df.mel$Price,
                            breaks = quantile(df.mel$Price),
