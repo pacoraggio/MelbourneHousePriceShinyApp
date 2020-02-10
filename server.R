@@ -12,6 +12,8 @@ library(shiny)
 shinyServer(function(input, output) {
 
     source("loadingdata.R")
+    source("coption.R")
+    
     lon.center <- mean(df.mel$Longtitude)
     lat.center <- mean(df.mel$Lattitude)
 
@@ -24,34 +26,26 @@ shinyServer(function(input, output) {
             return("h")
         else if(input$type == "Unit Duplex")
             return("u")
-        else(input$type == "Town house")
-        return("t")
+        else if(input$type == "Town house")
+            return("t")
+        return("All")
     })
 
     # Compute data.frame dimension 
     # based on the Selected Region        
     
     m.dimAll <- reactive({
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
         
-        # file <- "./Data/output.txt"
+        n.res <- dim(df.mel[which(df.mel$Rooms %in% rrooms &
+                                      df.mel$Bathroom %in% bbathrooms &
+                                      df.mel$Type %in% ttype),])[1]
         
-        n.res <- dim(df.mel[which(df.mel$Rooms == input$rooms &
-                         df.mel$Bathroom == input$barhrooms &
-                         df.mel$Type == convertType()),])[1]
-
-        # if(!file.exists("./Data/output.txt"))
-        # {
-        #     file.create("./Data/output.txt")
-        #     write("file created", file = file, append = TRUE)
-        # }else
-        # {
-        #     write(paste("# Rooms", input$rooms, 
-        #                 "# Bathroom: ", input$barhrooms, 
-        #                 "Type:", convertType(),
-        #                 "nrows: ", dim(df.mel[which(df.mel$Rooms == input$rooms &
-        #                                                 df.mel$Bathroom == input$barhrooms &
-        #                                                 df.mel$Type == convertType()),])[1]), file = file, append = TRUE)
-        # }
         return(n.res)
     })
     
@@ -60,22 +54,26 @@ shinyServer(function(input, output) {
             -1
         }else
         {
-            ttype <- convertType()
-            rrooms <- as.integer(input$rooms)
-            bbathrooms <- as.integer(input$barhrooms)
+            ttype <- c.option(convertType(), 
+                              unique(as.character(df.mel$Type))) 
+            rrooms <- c.option(input$rooms, 
+                               unique(df.mel$Rooms))
+            bbathrooms <- c.option(input$barhrooms,
+                                   unique(df.mel$Bathroom))
+            
             if(input$region == "All")
             {
-                df.mel <- df.mel[which(df.mel$Rooms == input$rooms &
-                                           df.mel$Bathroom == input$barhrooms &
-                                           df.mel$Type == ttype),]
+                df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                           df.mel$Bathroom %in% bbathrooms &
+                                           df.mel$Type %in% ttype),]
                 
             }else
             {
                 df.mel <- df.mel[which(df.mel$Regionname == input$region &
-                                 df.mel$Rooms == input$rooms &
-                                 df.mel$Bathroom == input$barhrooms &
-                                     df.mel$Type == ttype),]
-            }
+                                           df.mel$Rooms %in% rrooms &
+                                           df.mel$Bathroom %in% bbathrooms &
+                                           df.mel$Type %in% ttype),]
+            }            
             dim(df.mel)[1]
         }
         })
@@ -84,51 +82,79 @@ shinyServer(function(input, output) {
     # Imputted Parameters
     
     computeDF <- reactive({
-        ttype <- convertType()
-            rrooms <- as.integer(input$rooms)
-            bbathrooms <- as.integer(input$barhrooms)
-            if(input$region == "All")
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        if(input$region == "All")
             {
-                df.mel <- df.mel[which(df.mel$Rooms == input$rooms &
-                                           df.mel$Bathroom == input$barhrooms &
-                                           df.mel$Type == ttype),]
-                
+            df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                       df.mel$Bathroom %in% bbathrooms &
+                                       df.mel$Type %in% ttype),]
             }else
             {
                 df.mel <- df.mel[which(df.mel$Regionname == input$region &
-                                           df.mel$Rooms == input$rooms &
-                                           df.mel$Bathroom == input$barhrooms &
-                                           df.mel$Type == ttype),]
+                                           df.mel$Rooms %in% rrooms &
+                                           df.mel$Bathroom %in% bbathrooms &
+                                           df.mel$Type %in% ttype),]
             }
             df.mel
 
     })
     
     compute.meanAll <- reactive({
-            round(mean(df.mel[which(df.mel$Rooms == input$rooms &
-                             df.mel$Bathroom == input$barhrooms &
-                             df.mel$Type == convertType()),]$Price))
-    })
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
+                                    df.mel$Bathroom %in% bbathrooms &
+                                    df.mel$Type %in% ttype),]$Price))    })
 
     compute.sdAll <- reactive({
-        round(sd(df.mel[which(df.mel$Rooms == input$rooms &
-                                    df.mel$Bathroom == input$barhrooms &
-                                    df.mel$Type == convertType()),]$Price))
-    })
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
+                                    df.mel$Bathroom %in% bbathrooms &
+                                    df.mel$Type %in% ttype),]$Price))
+        })
     
     compute.meanRegion <- reactive({
-        round(mean(df.mel[which(df.mel$Rooms == input$rooms &
-                                    df.mel$Bathroom == input$barhrooms &
-                                    df.mel$Type == convertType() &
-                                    df.mel$Regionname == input$region),]$Price))
-    })
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
+                                    df.mel$Bathroom %in% bbathrooms &
+                                    df.mel$Type %in% ttype),]$Price))
+        })
     
     compute.sdRegion <- reactive({
-        round(sd(df.mel[which(df.mel$Rooms == input$rooms &
-                                    df.mel$Bathroom == input$barhrooms &
-                                    df.mel$Type == convertType() &
-                                    df.mel$Regionname == input$region),]$Price))
-    })
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        round(sd(df.mel[which(df.mel$Rooms %in% rrooms &
+                                  df.mel$Bathroom %in% bbathrooms &
+                                  df.mel$Type %in% ttype),]$Price))
+        })
     
     output$outWelcome <- renderText("Welcome to the App")
     # Outputting brief summary of the data
@@ -190,45 +216,52 @@ shinyServer(function(input, output) {
         }
         else
             {
-                ttype <- convertType()
+                ttype <- c.option(convertType(), 
+                                  unique(as.character(df.mel$Type))) 
+                rrooms <- c.option(input$rooms, 
+                                   unique(df.mel$Rooms))
+                bbathrooms <- c.option(input$barhrooms,
+                                       unique(df.mel$Bathroom))
+
                 if(input$region == "All")
                 {
-                    df.mel <- df.mel[which(df.mel$Rooms == input$rooms &
-                                            df.mel$Bathroom == input$barhrooms &
-                                            df.mel$Type == ttype),]}
+                    df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                               df.mel$Bathroom %in% bbathrooms &
+                                               df.mel$Type %in% ttype),]}
                 else{
                     df.mel <- df.mel[which(df.mel$Regionname == input$region &
-                                           df.mel$Rooms == input$rooms &
-                                           df.mel$Bathroom == input$barhrooms &
-                                           df.mel$Type == ttype),]
-                                            }
+                                               df.mel$Rooms %in% rrooms &
+                                               df.mel$Bathroom %in% bbathrooms &
+                                               df.mel$Type %in% ttype),]
+                    }
+                
                 if(nrow(df.mel)!= 0)
                 {
                 p <- plot_ly(df.mel, type = "scattermapbox") %>%
                     add_trace(lat = filter(df.mel, PriceCategory == "low")$Lattitude,
                               lon = filter(df.mel, PriceCategory == "low")$Longtitude,
-                              color = "Low Price",
+                              color = paste("<b>Low Price</b>","<br> < 660k"),
                               marker = list(color = "darkgreen"),
                               hoverinfo = "text",
                               hovertext = filter(df.mel, PriceCategory == "low")$HoverText,
                               mode = "markers") %>%
                     add_trace(lat = filter(df.mel, PriceCategory == "medium low")$Lattitude,
                               lon = filter(df.mel, PriceCategory == "medium low")$Longtitude,
-                              color = "Medium Low Price",
+                              color = paste("<b>Medium Low Price</b>", "<br> 660k - 910k"),
                               marker = list(color = "green"),
                               hoverinfo = "text",
                               hovertext = filter(df.mel, PriceCategory == "medium low")$HoverText,
                               mode = "markers") %>%
                     add_trace(lat = filter(df.mel, PriceCategory == "medium high")$Lattitude,
                               lon = filter(df.mel, PriceCategory == "medium high")$Longtitude,
-                              color = "Medium High Price",
+                              color = paste("<b>Medium High Price</b>","<br> 910K - 1.33M"),
                               marker = list(color = "orange"),
                               hovertext = filter(df.mel, PriceCategory == "medium high")$HoverText,
                               hoverinfo = "text",
                               mode = "markers")%>%
                     add_trace(lat = filter(df.mel, PriceCategory == "high")$Lattitude,
                               lon = filter(df.mel, PriceCategory == "high")$Longtitude,
-                              color = "High Price",
+                              color = paste("<b>High Price</b>","<br> > 1.33M"),
                               marker = list(color = "red"),
                               hovertext = filter(df.mel, PriceCategory == "high")$HoverText,
                               hoverinfo = "text",
@@ -256,29 +289,41 @@ shinyServer(function(input, output) {
     })
     
     output$globalstat <- renderPlotly({
-        ttype <- convertType()
-        df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
-                                    df.mel$Bathroom == input$barhrooms &
-                                    df.mel$Type == ttype),]   
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        df.mel1 <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                    df.mel$Bathroom %in% bbathrooms &
+                                    df.mel$Type %in% ttype ),]   
         p <- plot_ly(y = df.mel1$Price, type = "box")
         })
     
     output$statsummary <- renderPlotly({
-        ttype <- convertType()
-        df.mel1 <- df.mel[which(df.mel$Rooms == input$rooms &
-                                    df.mel$Bathroom == input$barhrooms &
-                                    df.mel$Type == ttype),]   
-
+        ttype <- c.option(convertType(), 
+                          unique(as.character(df.mel$Type))) 
+        rrooms <- c.option(input$rooms, 
+                           unique(df.mel$Rooms))
+        bbathrooms <- c.option(input$barhrooms,
+                               unique(df.mel$Bathroom))
+        
+        df.mel1 <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                    df.mel$Bathroom %in% bbathrooms &
+                                    df.mel$Type %in% ttype ),]   
+        
         if (input$region == "All")
         {
-            df.mel2 <- df.mel[which(df.mel$Rooms == input$rooms &
-                                        df.mel$Bathroom == input$barhrooms &
-                                        df.mel$Type == ttype),]   
+            df.mel2 <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                        df.mel$Bathroom %in% bbathrooms &
+                                        df.mel$Type %in% ttype ),]   
         }else
         {
-            df.mel2 <- df.mel[which(df.mel$Rooms == input$rooms &
-                                        df.mel$Bathroom == input$barhrooms &
-                                        df.mel$Type == ttype &
+            df.mel2 <- df.mel[which(df.mel$Rooms %in% rrooms &
+                                        df.mel$Bathroom %in% bbathrooms &
+                                        df.mel$Type %in% ttype  &
                                         df.mel$Regionname == input$region),]   
         }
         
