@@ -39,13 +39,13 @@ shinyUI(fluidPage(
                              selectInput(
                                  "rooms",
                                  "Number of Bedrooms",
-                                 choices = c("1", "2", "3", "4", "5", "6", "7", "8", "10", "12"),
+                                 choices = c("1", "2", "3", "4", "5", "6", "7", "8", "10", "12", "All"),
                                  selected = "3"
                              ),
                              selectInput(
                                  "barhrooms",
                                  "Number of Bathrooms: ",
-                                 choices = c("0", "1", "2", "3", "4", "5", "6", "7", "8"),
+                                 choices = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "All"),
                                  selected = "1"
                              )
                          ),
@@ -57,7 +57,7 @@ shinyUI(fluidPage(
                              selectInput(
                                  "type",
                                  "Type of Residency: ",
-                                 choices = c("House Cottage Villa", "Unit Duplex", "Town house"),
+                                 choices = c("House Cottage Villa", "Unit Duplex", "Town house", "All"),
                                  selected = "House/Cottage/Villa"
                              ),
                              selectInput(
