@@ -42,3 +42,9 @@ p <- plot_ly(y = ~df.mel1$Price,
     add_trace(y = ~df.mel2$Price)
 
 p
+
+# rsconnect::setAccountInfo(name='pacoraggio',
+#                           token='1C95A63CF4106221EE1B090217430620',
+#                           secret='u9sx+jPOVcYZyTcmWfZUsqIpIT4f1CMppQ4Ko6ES')
+# 
+# rsconnect::deployApp('C:/Users/pacor/Desktop/Paolo/WIP/Coursera/09_Developing_Data_Products-master/GIT/Week4Assignment/Beta/MelbourneHousePriceShinyApp')
