@@ -12,16 +12,18 @@ library(plotly)
 
 shinyUI(fluidPage(
     # Application title
-    titlePanel("Melbourne House Prices"),
+    titlePanel("Melbourne House Prices Map"),
     
     fluidPage(
         tabsetPanel(
             tabPanel("Welcome Page", fluid = TRUE,
                      #mainPanel(
                      br(),
-                     h1(" Melbourne Price Map Application"),
-                     br(),
-                     h3(" Check what is the average price of the house house you are searching for in Melbourne"),
+                     h1(HTML(paste(tags$span(style = "text-align:center"), 
+                                   "Welcome to the Melbourne Houses Prices Map App"))),
+                     hr(),
+                     h2(HTML(paste("This text is ", tags$span(style="color:red", "red"), sep = ""))),
+                     h2(" Check what is the average price of the house house you are searching for in Melbourne"),
                      h3(" Go to the Map tab, select the number of Rooms and Bathroom, the type of house and the Melborne district
                             and it will displayed how many houses matches your criteria and what are the prices"),
                      h3(" You can also see the comparison of the average price of your selected distric and overall in Melbourn"),
@@ -76,7 +78,16 @@ shinyUI(fluidPage(
                                      "All"
                                  ),
                                  selected = "Select a Region"
-                             )
+                             ),
+                             # sliderInput(
+                             #     "price",
+                             #     "Select price range",
+                             #     min = 85000,
+                             #     max = 11200000,
+                             #     value = c(min, max),
+                             #     step = 10000,
+                             #     pre = "$", sep = ","
+                             # )
                          ),
                          column(
                              3,
@@ -85,6 +96,7 @@ shinyUI(fluidPage(
                              hr(),
                              htmlOutput("summary")
                          ),
+                         
                          column(3,
                                 HTML(paste(
                                     h4("Summary Data"), h5("All Region")
@@ -94,9 +106,23 @@ shinyUI(fluidPage(
                          
                      ),
                      br(),
-                     fluidRow(column(8,
+                     fluidRow(column(2,
+                                     HTML(paste(
+                                         h4("Price"))),
+                                     hr(),
+                                     sliderInput(
+                                         "price",
+                                         "Select price range",
+                                         min = 85000,
+                                         max = 11200000,
+                                         value = c(min, max),
+                                         step = 25000,
+                                         pre = "$", sep = ","
+                                     )
+                     ),
+                         column(7,
                                      plotlyOutput("housesPlot")),
-                              column(4,
+                              column(3,
                                      plotlyOutput("statsummary"))),
                      br())
         )
