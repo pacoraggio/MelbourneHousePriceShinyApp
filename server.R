@@ -44,7 +44,8 @@ shinyServer(function(input, output) {
         
         n.res <- dim(df.mel[which(df.mel$Rooms %in% rrooms &
                                       df.mel$Bathroom %in% bbathrooms &
-                                      df.mel$Type %in% ttype),])[1]
+                                      df.mel$Type %in% ttype &
+                                      (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),])[1]
         
         return(n.res)
     })
@@ -65,15 +66,17 @@ shinyServer(function(input, output) {
             {
                 df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
                                            df.mel$Bathroom %in% bbathrooms &
-                                           df.mel$Type %in% ttype),]
+                                           df.mel$Type %in% ttype &
+                                           (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]
                 
             }else
             {
                 df.mel <- df.mel[which(df.mel$Regionname == input$region &
                                            df.mel$Rooms %in% rrooms &
                                            df.mel$Bathroom %in% bbathrooms &
-                                           df.mel$Type %in% ttype),]
-            }            
+                                           df.mel$Type %in% ttype &
+                                           (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]
+            }
             dim(df.mel)[1]
         }
         })
@@ -93,13 +96,15 @@ shinyServer(function(input, output) {
             {
             df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
                                        df.mel$Bathroom %in% bbathrooms &
-                                       df.mel$Type %in% ttype),]
+                                       df.mel$Type %in% ttype  &
+                                       (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]
             }else
             {
                 df.mel <- df.mel[which(df.mel$Regionname == input$region &
                                            df.mel$Rooms %in% rrooms &
                                            df.mel$Bathroom %in% bbathrooms &
-                                           df.mel$Type %in% ttype),]
+                                           df.mel$Type %in% ttype  &
+                                           (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]
             }
             df.mel
 
@@ -115,7 +120,8 @@ shinyServer(function(input, output) {
         
         round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
                                     df.mel$Bathroom %in% bbathrooms &
-                                    df.mel$Type %in% ttype),]$Price))    })
+                                    df.mel$Type %in% ttype  &
+                                    (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]$Price))    })
 
     compute.sdAll <- reactive({
         ttype <- c.option(convertType(), 
@@ -127,7 +133,8 @@ shinyServer(function(input, output) {
         
         round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
                                     df.mel$Bathroom %in% bbathrooms &
-                                    df.mel$Type %in% ttype),]$Price))
+                                    df.mel$Type %in% ttype  &
+                                    (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]$Price))
         })
     
     compute.meanRegion <- reactive({
@@ -140,7 +147,8 @@ shinyServer(function(input, output) {
         
         round(mean(df.mel[which(df.mel$Rooms %in% rrooms &
                                     df.mel$Bathroom %in% bbathrooms &
-                                    df.mel$Type %in% ttype),]$Price))
+                                    df.mel$Type %in% ttype  &
+                                    (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]$Price))
         })
     
     compute.sdRegion <- reactive({
@@ -153,7 +161,8 @@ shinyServer(function(input, output) {
         
         round(sd(df.mel[which(df.mel$Rooms %in% rrooms &
                                   df.mel$Bathroom %in% bbathrooms &
-                                  df.mel$Type %in% ttype),]$Price))
+                                  df.mel$Type %in% ttype  &
+                                  (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]$Price))
         })
     
     output$outWelcome <- renderText("Welcome to the App")
@@ -227,12 +236,14 @@ shinyServer(function(input, output) {
                 {
                     df.mel <- df.mel[which(df.mel$Rooms %in% rrooms &
                                                df.mel$Bathroom %in% bbathrooms &
-                                               df.mel$Type %in% ttype),]}
+                                               df.mel$Type %in% ttype  &
+                                               (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]}
                 else{
                     df.mel <- df.mel[which(df.mel$Regionname == input$region &
                                                df.mel$Rooms %in% rrooms &
                                                df.mel$Bathroom %in% bbathrooms &
-                                               df.mel$Type %in% ttype),]
+                                               df.mel$Type %in% ttype  &
+                                               (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]
                     }
                 
                 if(nrow(df.mel)!= 0)
@@ -298,7 +309,8 @@ shinyServer(function(input, output) {
         
         df.mel1 <- df.mel[which(df.mel$Rooms %in% rrooms &
                                     df.mel$Bathroom %in% bbathrooms &
-                                    df.mel$Type %in% ttype ),]   
+                                    df.mel$Type %in% ttype  &
+                                    (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]   
         p <- plot_ly(y = df.mel1$Price, type = "box")
         })
     
@@ -312,19 +324,22 @@ shinyServer(function(input, output) {
         
         df.mel1 <- df.mel[which(df.mel$Rooms %in% rrooms &
                                     df.mel$Bathroom %in% bbathrooms &
-                                    df.mel$Type %in% ttype ),]   
+                                    df.mel$Type %in% ttype  &
+                                    (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]   
         
         if (input$region == "All")
         {
             df.mel2 <- df.mel[which(df.mel$Rooms %in% rrooms &
                                         df.mel$Bathroom %in% bbathrooms &
-                                        df.mel$Type %in% ttype ),]   
+                                        df.mel$Type %in% ttype  &
+                                        (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]   
         }else
         {
             df.mel2 <- df.mel[which(df.mel$Rooms %in% rrooms &
                                         df.mel$Bathroom %in% bbathrooms &
                                         df.mel$Type %in% ttype  &
-                                        df.mel$Regionname == input$region),]   
+                                        df.mel$Regionname == input$region &
+                                        (df.mel$Price >= input$price[1] & df.mel$Price <= input$price[2])),]   
         }
         
         y <- list(
