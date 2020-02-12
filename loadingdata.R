@@ -18,8 +18,22 @@ df.mel$MarkerColor <-cut(df.mel$Price,
                          breaks = quantile(df.mel$Price),
                          labels = c("darkgreen", "green", "red", "darkred"))
 
+residency.type <- function(ttype)
+{
+    if (ttype == "h")
+    {
+        return("House Cottage Villa")
+    }else if (ttype == "u")
+    {
+        return("Unit Duplex")
+    }else
+    {
+        return("Town house")
+    }
+}
+
 df.mel$HoverText <- with(df.mel, paste('<b>Price:</b>', Price,
                          '<br>', "Council: ", CouncilArea, 
                          '<br>', "Region: ", Regionname, 
-                         '<br>', "Number of Rooms", Rooms,
-                         '<br>', "Type", Type))
+                         '<br>', "# Rooms: ", Rooms,  " # Bathrooms: ", Bathroom,
+                         '<br>', "Type", lapply(Type,residency.type)))
