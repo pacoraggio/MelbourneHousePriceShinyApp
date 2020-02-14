@@ -1,2 +1,3 @@
 # MelbourneHousePriceShinyApp
-Beta version of Melbourne House Price Shiny App
+Melbourne House Price Shiny App For Coursera Developing Data Products module
+
